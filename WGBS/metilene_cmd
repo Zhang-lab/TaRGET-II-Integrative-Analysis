@@ -1,0 +1,5 @@
+
+perl metilene_path/metilene_v0.2-8/metilene_input.pl --in1 F_T105c_Lead_F_Liver_5mo,F_T107d_Lead_M_Liver_5mo,F_T116c_Lead_F_Liver_5mo,F_T102c_Lead_F_Liver_5mo,F_T103c_Lead_F_Liver_5mo,F_T112c_Lead_F_Liver_5mo --in2 F_T113c_Ctrl_F_Liver_5mo,F_T119e_Ctrl_F_Liver_5mo,F_T119g_Ctrl_F_Liver_5mo,F_T101c_Ctrl_F_Liver_5mo,F_T109c_Ctrl_F_Liver_5mo,F_T118c_Ctrl_F_Liver_5mo --h1 Lead --h2 ctrl --out Michigan_Female_Lead_vs_ctrl_input
+
+
+metilene_path/metilene_v0.2-8/metilene_linux64 -t 24 -a Lead -b ctrl -M 200 -m 3 Michigan_Female_Lead_vs_ctrl_input > metilene_Female_Lead_vs_ctrl_Michigan
