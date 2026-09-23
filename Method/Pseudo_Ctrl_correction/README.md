@@ -1,20 +1,22 @@
-## Normalization and Pseudo-control–based Batch Correction
+## Normalization and Pseudo-control–based Batch Effect Correction
 
-RNA-seq and ATAC-seq datasets were processed using a unified normalization and batch-correction framework to minimize technical variation associated with data production centers while preserving exposure-related biological signals.
+RNA-seq and ATAC-seq datasets were normalized and corrected for technical variation and production-center effects using the workflow below. In general, data generated within the same production center were initially processed together.
 
-### Step 1. Within-center normalization and removal of unwanted variation
+### Step 1. RLE normalization and removal of unwanted variation
 
-RNA-seq gene-count matrices and ATAC-seq peak-count matrices were normalized using relative log expression (RLE) normalization. Residual unwanted variation was subsequently estimated using `RUVr` from the `RUVSeq` package.
+RNA-seq gene counts were first normalized using the relative log expression (RLE) method. Residual variation across exposure groups was then estimated using `RUVr` from the `RUVSeq` package.
 
-Three unwanted factors (`k = 3`) were included to capture technical variation unrelated to exposure, including variation associated with tissue dissection, library preparation, and other experimental factors.
+Three unwanted factors (`k = 3`) were incorporated into a general linear modeling framework to account for technical variation unrelated to exposure, including variation associated with tissue dissection and library preparation.
+
+The same normalization framework was applied to ATAC-seq peak-count data.
 
 **Script**
 
 - `1. RLE_normalization_and_RUVr_function.R`
 
-### Step 2. Assembly of exposure-specific datasets
+### Step 2. Preparation of exposure and control datasets
 
-RUVr-adjusted matrices and the corresponding raw count matrices were consolidated across exposure groups to generate harmonized datasets for pseudo-control construction and subsequent cross-center correction.
+For each exposure, exposed samples were matched with the corresponding control samples according to relevant biological factors, including tissue, age, and sex. RUVr-processed data and the corresponding raw count matrices were then combined across exposure datasets for construction of the cross-center pseudo-control reference.
 
 **Scripts**
 
@@ -23,9 +25,11 @@ RUVr-adjusted matrices and the corresponding raw count matrices were consolidate
 
 ### Step 3. Construction of pseudo-control references
 
-Pseudo-control references were generated separately for matched biological strata defined by relevant covariates, including tissue, age, and sex.
+Pseudo-controls were generated separately for female and male samples using matched controls across production centers.
 
-Within each stratum, control samples from multiple production centers were used to estimate a common cross-center reference profile. Center-specific control profiles were then compared with the corresponding pseudo-control reference to quantify systematic production-center effects.
+For each biological condition, the **pseudo-control (CP)** represents the mean signal of the corresponding control samples across production centers. A **center control (CC)** was also calculated as the mean signal of control samples within each production center.
+
+The difference between each center-specific control profile and the corresponding pseudo-control reference was used to characterize systematic production-center effects.
 
 **Script**
 
@@ -33,9 +37,9 @@ Within each stratum, control samples from multiple production centers were used 
 
 ### Step 4. Pseudo-control–based production-center correction
 
-For each production center, the deviation between the center-specific control profile and the corresponding pseudo-control reference was used to estimate a center-specific correction factor.
+For each production center, a center-specific normalization factor was derived from the difference between the center control (CC) and the corresponding pseudo-control (CP).
 
-This correction was applied consistently to both control and exposed samples generated at the same center. This procedure reduces systematic center-associated variation while retaining the relative molecular differences between exposed and control samples.
+Control samples were first aligned to the pseudo-control reference. The same center-specific adjustment was then applied to exposed samples generated at that center, thereby reducing systematic production-center effects while maintaining the relative differences between control and exposed samples.
 
 **Script**
 
@@ -43,7 +47,7 @@ This correction was applied consistently to both control and exposed samples gen
 
 ### Step 5. Differential analysis
 
-The batch-corrected matrices were used as input for downstream differential analyses.
+The corrected datasets were used for downstream differential analyses.
 
 For RNA-seq, differentially expressed genes (DEGs) were identified using:
 
