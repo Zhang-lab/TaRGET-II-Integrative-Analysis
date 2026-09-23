@@ -2,7 +2,7 @@
 
 RNA-seq and ATAC-seq datasets were normalized and corrected for technical variation and production-center effects using the workflow below. In general, data generated within the same production center were initially processed together.
 
-### Step 1. RLE normalization and removal of unwanted variation
+### Step 1. Within-center normalization and removal of unwanted variation
 
 RNA-seq gene counts were first normalized using the relative log expression (RLE) method. Residual variation across exposure groups was then estimated using `RUVr` from the `RUVSeq` package.
 
